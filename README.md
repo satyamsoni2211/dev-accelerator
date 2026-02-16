@@ -1,6 +1,23 @@
-# Ghostty Terminal Configuration
+# dev-accelerator - Developer Productivity Terminal Setup
 
 A Nix flake-based configuration to install and set up Ghostty terminal on macOS with all required plugins and tools. Also includes Homebrew and shell script fallbacks.
+
+## Quick Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/dev-accelerator/main/install.sh | bash
+```
+
+Or download and run manually:
+```bash
+curl -fsSL https://github.com/satyamsoni2211/dev-accelerator/archive/main.zip -o dev-accelerator.zip
+unzip dev-accelerator.zip
+cd dev-accelerator
+chmod +x install.sh
+./install.sh
+```
+
+> Note: Replace `satyamsoni2211` with your GitHub username after forking this repo.
 
 ## Features
 
@@ -26,8 +43,8 @@ The easiest way to get started:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Clone this repository
-git clone https://github.com/yourusername/ghostty-terminal-setup.git
-cd ghostty-terminal-setup
+git clone https://github.com/satyamsoni2211/dev-accelerator.git
+cd dev-accelerator
 
 # Install all tools via Homebrew Bundle
 brew bundle install
@@ -54,8 +71,8 @@ If you prefer manual installation:
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/ghostty-terminal-setup.git
-cd ghostty-terminal-setup
+git clone https://github.com/satyamsoni2211/dev-accelerator.git
+cd dev-accelerator
 
 # Make script executable
 chmod +x setup.sh
@@ -116,7 +133,7 @@ sudo launchctl kickstart -k system/org.nixos.nix-daemon
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/ghostty-nix.git
+git clone https://github.com/satyamsoni2211/ghostty-nix.git
 cd ghostty-nix
 
 # Generate lock file

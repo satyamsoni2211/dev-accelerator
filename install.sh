@@ -3,7 +3,7 @@
 # =============================================================================
 # Ghostty Terminal Setup - One-Click Installer
 # =============================================================================
-# Usage: curl -fsSL https://raw.githubusercontent.com/yourusername/ghostty-terminal-setup/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/ghostty-terminal-setup/main/install.sh | bash
 # Or: ./install.sh
 # =============================================================================
 
@@ -30,7 +30,7 @@ STAR="${YELLOW}★${NC}"
 ROCKET="${GREEN}🚀${NC}"
 
 # Variables
-REPO_URL="${REPO_URL:-https://github.com/yourusername/ghostty-terminal-setup.git}"
+REPO_URL="${REPO_URL:-https://github.com/satyamsoni2211/dev-accelerator.git}"
 INSTALL_DIR="${HOME}/.ghostty-setup"
 GHOSTTY_CONFIG_DIR="${HOME}/.config/ghostty"
 STARSHIP_CONFIG="${HOME}/.config/starship.toml"
@@ -41,8 +41,8 @@ print_banner() {
     echo -e "${CYAN}"
     echo "╔═══════════════════════════════════════════════════════════════════╗"
     echo "║                                                                   ║"
-    echo "║   ${WHITE}${BOLD}Ghostty Terminal Setup${NC}${CYAN}                                      ║"
-    echo "║   ${DIM}One-click installer for your dream terminal${NC}${CYAN}                  ║"
+    echo "║   ${WHITE}${BOLD}dev-accelerator${NC}${CYAN}                                          ║"
+    echo "║   ${DIM}Ship code faster with a productivity-powered terminal${NC}${CYAN}       ║"
     echo "║                                                                   ║"
     echo "╚═══════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
@@ -119,6 +119,18 @@ install_tools() {
 
     print_info "Installing packages from Brewfile..."
     brew bundle install --file="${INSTALL_DIR}/Brewfile"
+
+    # Install Oh My Zsh
+    print_info "Installing Oh My Zsh..."
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+        print_success "Oh My Zsh already installed"
+    else
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        print_success "Oh My Zsh installed"
+    fi
+
+    # Set ZSH_CUSTOM
+    export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 
     print_success "All tools installed!"
 }
@@ -329,6 +341,7 @@ print_final_message() {
 
     echo -e "${WHITE}${BOLD}Installed Tools:${NC}"
     echo -e "${BULLET} ${CYAN}Ghostty${NC}        - GPU-accelerated terminal"
+    echo -e "${BULLET} ${CYAN}Oh My Zsh${NC}     - Zsh framework"
     echo -e "${BULLET} ${CYAN}Zsh${NC}           - Shell with plugins"
     echo -e "${BULLET} ${CYAN}Starship${NC}       - Cross-shell prompt"
     echo -e "${BULLET} ${CYAN}Atuin${NC}         - Shell history"
@@ -338,6 +351,15 @@ print_final_message() {
     echo -e "${BULLET} ${CYAN}FNM${NC}          - Node.js manager"
     echo -e "${BULLET} ${CYAN}Eza${NC}          - Modern ls"
     echo -e "${BULLET} ${CYAN}Bat${NC}           - Modern cat"
+    echo -e "${BULLET} ${CYAN}Yazi${NC}          - File manager"
+    echo -e "${BULLET} ${CYAN}Pet${NC}           - Snippet manager"
+    echo -e "${BULLET} ${CYAN}Htop${NC}          - Process viewer"
+    echo -e "${BULLET} ${CYAN}Direnv${NC}        - Environment manager"
+    echo -e "${BULLET} ${CYAN}Jq${NC}            - JSON processor"
+    echo -e "${BULLET} ${CYAN}TheFuck${NC}       - Command corrector"
+    echo -e "${BULLET} ${CYAN}Uv${NC}            - Python package manager"
+    echo -e "${BULLET} ${CYAN}Fd${NC}            - Fast finder"
+    echo -e "${BULLET} ${CYAN}Ripgrep${NC}       - Fast grep"
     echo ""
 
     echo -e "${WHITE}${BOLD}What's Next:${NC}"
