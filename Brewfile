@@ -21,7 +21,7 @@ brew "yazi"
 brew "ripgrep"
 
 # snippet tool very handy
-brew "knqyf263/pet"
+brew "pet"
 
 # Shell enhancements
 brew "atuin"
