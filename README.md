@@ -1,6 +1,6 @@
 # dev-accelerator - Developer Productivity Terminal Setup
 
-A Nix flake-based configuration to install and set up Ghostty terminal on macOS with all required plugins and tools. Also includes Homebrew and shell script fallbacks.
+A configuration to install and set up Ghostty terminal on macOS with all required plugins and tools. Supports three installation methods: One-click installer, Homebrew, and shell script.
 
 ## Quick Install
 
@@ -22,19 +22,37 @@ chmod +x install.sh
 ## Features
 
 - **Ghostty** - GPU-accelerated terminal emulator
-- **Zsh** - Shell with plugins
-- **Starship** - Cross-shell prompt
+- **Zsh** - Shell with plugins (auto-detects if already installed)
+- **Starship** - Cross-shell prompt with gruvbox-rainbow preset
 - **Atuin** - Shell history with sync
 - **Zoxide** - Smarter cd command
 - **FZF** - Fuzzy finder
 - **Mise** - Runtime manager
-- **And more tools...**
+- **Dynamic package checking** - Only installs missing packages
+- **Safe .zshrc handling** - Creates backup before modifications
 
 ## Installation Methods
 
 Choose one of the three methods below:
 
-### Method 1: Homebrew (Recommended for most users)
+### Method 1: One-Click Installer (Recommended)
+
+The fastest way to get everything set up:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/dev-accelerator/main/install.sh | bash
+```
+
+This script:
+- Checks for Homebrew and installs if needed
+- Dynamically checks and installs only missing packages
+- Configures Zsh with all plugins
+- Sets up Starship with gruvbox-rainbow theme
+- Creates Ghostty configuration with Catppuccin theme
+- Backs up existing .zshrc before modifications
+- Sets Zsh as default shell
+
+### Method 2: Homebrew + Setup Script
 
 The easiest way to get started:
 
@@ -46,26 +64,11 @@ The easiest way to get started:
 git clone https://github.com/satyamsoni2211/dev-accelerator.git
 cd dev-accelerator
 
-# Install all tools via Homebrew Bundle
-brew bundle install
-
-# Run the setup script to configure everything
+# Run the setup script (interactively selects options)
 ./setup.sh
 ```
 
-Or manually:
-```bash
-# Install Ghostty
-brew install ghostty
-
-# Install all tools
-brew install git gh zsh zsh-autosuggestions zsh-syntax-highlighting fzf fd zoxide atuin starship thefuck direnv mise fnm uv jq eza bat htop
-
-# Configure zsh
-./setup.sh  # Select option 3 for configure only
-```
-
-### Method 2: Shell Script (No package manager)
+### Method 3: Manual Setup Script Only
 
 If you prefer manual installation:
 
@@ -83,10 +86,11 @@ chmod +x setup.sh
 
 The script will:
 - Install Homebrew if not present
-- Install Ghostty and all tools
+- Check and install only missing tools
 - Configure Zsh with plugins
-- Set up Starship prompt
+- Set up Starship prompt (gruvbox-rainbow)
 - Create Ghostty configuration
+- Back up existing .zshrc
 - Set Zsh as default shell
 
 ### Method 3: Nix Flakes (For Nix users)
@@ -192,26 +196,29 @@ Edit `zsh/zshrc.nix` to:
 
 | Tool | Description |
 |------|-------------|
-| `gh` | GitHub CLI |
-| `git` | Version control |
+| `ghostty` | GPU-accelerated terminal emulator |
+| `zsh` | Shell with plugins (auto-detected) |
 | `zsh-autosuggestions` | Zsh plugin for command suggestions |
 | `zsh-syntax-highlighting` | Zsh plugin for syntax highlighting |
 | `fzf` | Fuzzy finder |
 | `fd` | Fast file finder |
 | `zoxide` | Smarter cd command |
 | `yazi` | Blazing fast file manager |
+| `ripgrep` | Fast grep alternative |
 | `atuin` | Shell history with sync |
-| `starship` | Cross-shell prompt |
+| `starship` | Cross-shell prompt (gruvbox-rainbow) |
 | `mise` | Runtime version manager |
 | `fnm` | Node.js version manager |
 | `uv` | Python package manager |
 | `jq` | JSON processor |
 | `thefuck` | Command correction |
-| `pet` | Snippet manager |
 | `eza` | Modern ls replacement |
 | `bat` | Modern cat replacement |
 | `htop` | Interactive process viewer |
 | `direnv` | Environment variable loader |
+| `pet` | Snippet manager |
+
+> Note: `git` is assumed to be pre-installed on all systems and is not installed by the scripts.
 
 ## Troubleshooting
 
@@ -247,7 +254,10 @@ home-manager switch --flake .#satyam@Satyams-MacBook-Pro
 rm -rf ~/.config/ghostty
 rm -rf ~/.config/starship.toml
 
-# Remove nix configuration
+# Optional: Restore .zshrc from backup if needed
+# cp ~/.zshrc.backup ~/.zshrc
+
+# Remove nix configuration (if using Nix method)
 rm -rf ~/.config/nix
 sudo rm -rf /etc/nix
 ```

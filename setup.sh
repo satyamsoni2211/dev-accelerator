@@ -32,26 +32,94 @@ check_brew() {
     fi
 }
 
-# Install Ghostty
-install_ghostty() {
-    echo -e "${YELLOW}Installing Ghostty via Brewfile...${NC}"
-    brew bundle install --file="$(dirname "$0")/Brewfile"
-    echo -e "${GREEN}Ghostty installed successfully!${NC}"
-}
-
 # Install required tools
 install_tools() {
-    echo -e "${YELLOW}Installing required tools via Brewfile...${NC}"
+    echo -e "${YELLOW}Checking and installing missing tools...${NC}"
 
-    # Use Brewfile for all installations
-    brew bundle install --file="$(dirname "$0")/Brewfile"
+    # Check if zsh is installed via any method
+    check_zsh_installed() {
+        # Check if zsh exists in common locations
+        if command -v zsh &> /dev/null; then
+            return 0
+        elif [ -f "/bin/zsh" ] || [ -f "/usr/bin/zsh" ]; then
+            return 0
+        elif [ -d "$HOME/.oh-my-zsh" ]; then
+            # Oh My Zsh includes zsh
+            return 0
+        fi
+        return 1
+    }
 
-    echo -e "${GREEN}All tools installed successfully!${NC}"
+    # Install zsh if not found
+    if check_zsh_installed; then
+        echo -e "${GREEN}✓${NC} zsh already installed"
+    else
+        echo -e "${YELLOW}→${NC} Installing zsh..."
+        brew install zsh --quiet
+        echo -e "${GREEN}✓${NC} zsh installed"
+    fi
+
+    # Define packages to check (formulae) - skip zsh since we handled it above
+    local formulae=(
+        "zsh-autosuggestions"
+        "zsh-syntax-highlighting"
+        "fzf"
+        "fd"
+        "zoxide"
+        "yazi"
+        "ripgrep"
+        "atuin"
+        "starship"
+        "thefuck"
+        "direnv"
+        "mise"
+        "fnm"
+        "uv"
+        "jq"
+        "eza"
+        "bat"
+        "htop"
+    )
+
+    # Define casks to check
+    local casks=(
+        "ghostty"
+    )
+
+    # Check and install missing formulae
+    for formula in "${formulae[@]}"; do
+        if brew list "$formula" &> /dev/null; then
+            echo -e "${GREEN}✓${NC} $formula already installed"
+        else
+            echo -e "${YELLOW}→${NC} Installing $formula..."
+            brew install "$formula" --quiet
+            echo -e "${GREEN}✓${NC} $formula installed"
+        fi
+    done
+
+    # Check and install missing casks
+    for cask in "${casks[@]}"; do
+        if brew list --cask "$cask" &> /dev/null; then
+            echo -e "${GREEN}✓${NC} $cask already installed"
+        else
+            echo -e "${YELLOW}→${NC} Installing $cask..."
+            brew install --cask "$cask" --quiet
+            echo -e "${GREEN}✓${NC} $cask installed"
+        fi
+    done
+
+    echo -e "${GREEN}All tools checked and installed successfully!${NC}"
 }
 
 # Setup Zsh configuration
 setup_zsh() {
     echo -e "${YELLOW}Setting up Zsh configuration...${NC}"
+
+    # Backup existing .zshrc if it exists and hasn't been backed up
+    if [ -f "$HOME/.zshrc" ] && [ ! -f "$HOME/.zshrc.backup" ]; then
+        cp "$HOME/.zshrc" "$HOME/.zshrc.backup"
+        echo -e "${GREEN}✓${NC} Backed up existing .zshrc to .zshrc.backup"
+    fi
 
     # Create .zshrc if it doesn't exist
     if [ ! -f "$HOME/.zshrc" ]; then
@@ -181,39 +249,35 @@ setup_starship() {
 
     # Create starship config only if it doesn't exist
     if [ ! -f "$HOME/.config/starship.toml" ]; then
-        cat > "$HOME/.config/starship.toml" << 'EOF'
+        starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml" 2>/dev/null || {
+            # Fallback if preset command not available
+            cat > "$HOME/.config/starship.toml" << 'EOF'
 format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character"
-
 [username]
 show_always = true
 style_root = "bold red"
 style_user = "bold blue"
-
 [hostname]
 show_always = true
 style = "bold blue"
-
 [directory]
 style = "bold cyan"
 truncation_symbol = ""
 home_symbol = "~"
-
 [character]
 success_symbol = "[➜](bold green)"
 error_symbol = "[✗](bold red)"
-
 [nodejs]
 symbol = "node "
 style = "bold green"
-
 [python]
 symbol = "py "
 style = "bold yellow"
-
 [rust]
 symbol = "rs "
 style = "bold red"
 EOF
+        }
         echo -e "${GREEN}Starship config created!${NC}"
     else
         echo -e "${YELLOW}Starship config already exists, skipping.${NC}"
@@ -243,7 +307,6 @@ setup_ghostty() {
 # Font configuration
 font-family = JetBrains Mono
 font-size = 13
-font-weight = 400
 
 # Catppuccin Mocha theme
 background = #1e1e2e
@@ -255,35 +318,10 @@ selection-foreground = #cdd6f4
 # Window settings
 window-padding-x = 10
 window-padding-y = 10
-window-padding-display = centered
-window-title = @{title}
 
-# Tab bar
-tab-bar = always
-tab-bar-font-size = 12
-tab-bar-background = #181825
-tab-bar-foreground = #cdd6f4
-tab-bar-mode = flex
-tab-title = @{window-title}
 
-# Shell
-shell-integration-features = no-cursor
-
-# Keybindings
-keybindings = cmd-t: new_tab
-keybindings = cmd-w: close_tab
-keybindings = cmd-shift-bracketright: next_tab
-keybindings = cmd-shift-bracketleft: previous_tab
-keybindings = cmd-shift-n: new_window
-keybindings = cmd-plus: font_size_increase
-keybindings = cmd-minus: font_size_decrease
-keybindings = cmd-0: font_size_reset
-
-# Mouse
-mouse-hide = true
-
-# Bell
-bell = none
+# Shell integration
+shell-integration = detect
 EOF
         echo -e "${GREEN}Ghostty configuration created!${NC}"
     else

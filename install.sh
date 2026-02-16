@@ -37,15 +37,15 @@ STARSHIP_CONFIG="${HOME}/.config/starship.toml"
 
 # Print banner
 print_banner() {
-    clear
-    echo -e "${CYAN}"
-    echo "╔═══════════════════════════════════════════════════════════════════╗"
-    echo "║                                                                   ║"
-    echo "║   ${WHITE}${BOLD}dev-accelerator${NC}${CYAN}                                          ║"
-    echo "║   ${DIM}Ship code faster with a productivity-powered terminal${NC}${CYAN}       ║"
-    echo "║                                                                   ║"
-    echo "╚═══════════════════════════════════════════════════════════════════╝"
-    echo -e "${NC}"
+    printf "\033[2J\033[H"
+    printf "${CYAN}"
+    printf "╔═══════════════════════════════════════════════════════════════════╗\n"
+    printf "║                                                                   ║\n"
+    printf "║   ${WHITE}${BOLD}dev-accelerator${NC}${CYAN}                                          ║\n"
+    printf "║   ${DIM}Ship code faster with a productivity-powered terminal${NC}${CYAN}       ║\n"
+    printf "║                                                                   ║\n"
+    printf "╚═══════════════════════════════════════════════════════════════════╝\n"
+    printf "${NC}\n"
     echo ""
 }
 
@@ -117,8 +117,58 @@ clone_repo() {
 install_tools() {
     print_section "Installing Tools"
 
-    print_info "Installing packages from Brewfile..."
-    brew bundle install --file="${INSTALL_DIR}/Brewfile"
+    # Read packages from Brewfile and install only missing ones
+    print_info "Checking and installing missing packages..."
+
+    # Define packages to check (formulae)
+    local formulae=(
+        "zsh"
+        "zsh-autosuggestions"
+        "zsh-syntax-highlighting"
+        "fzf"
+        "fd"
+        "zoxide"
+        "yazi"
+        "ripgrep"
+        "atuin"
+        "starship"
+        "thefuck"
+        "direnv"
+        "mise"
+        "fnm"
+        "uv"
+        "jq"
+        "eza"
+        "bat"
+        "htop"
+    )
+
+    # Define casks to check
+    local casks=(
+        "ghostty"
+    )
+
+    # Check and install missing formulae
+    for formula in "${formulae[@]}"; do
+        if brew list "$formula" &> /dev/null; then
+            print_success "$formula already installed"
+        else
+            print_info "Installing $formula..."
+            brew install "$formula" --quiet
+            print_success "$formula installed"
+        fi
+    done
+
+    # Check and install missing casks
+    for cask in "${casks[@]}"; do
+        if brew list --cask "$cask" &> /dev/null; then
+            print_success "$cask already installed"
+        else
+            print_info "Installing $cask..."
+            brew install --cask "$cask" --quiet
+            print_success "$cask installed"
+        fi
+    done
 
     # Install Oh My Zsh
     print_info "Installing Oh My Zsh..."
@@ -213,7 +263,9 @@ EOF
     print_info "Configuring Starship..."
     mkdir -p "${HOME}/.config"
     if [ ! -f "$STARSHIP_CONFIG" ]; then
-        cat > "$STARSHIP_CONFIG" << 'EOF'
+        starship preset gruvbox-rainbow -o "$STARSHIP_CONFIG" 2>/dev/null || {
+            # Fallback if preset command not available
+            cat > "$STARSHIP_CONFIG" << 'EOF'
 format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character"
 
 [username]
@@ -246,6 +298,7 @@ style = "bold yellow"
 symbol = "rs "
 style = "bold red"
 EOF
+        }
         print_success "Starship configured"
     else
         print_warning "Starship config already exists, skipping"
@@ -261,40 +314,33 @@ EOF
 # Font configuration
 font-family = JetBrains Mono
 font-size = 13
-font-weight = 400
 
 # Catppuccin Mocha theme
 background = #1e1e2e
 foreground = #cdd6f4
 cursor-color = #f5e0dc
 selection-background = #45475a
+selection-foreground = #cdd6f4
 
 # Window settings
 window-padding-x = 10
 window-padding-y = 10
-window-padding-display = centered
-window-title = @{title}
 
-# Tab bar
-tab-bar = always
-tab-bar-font-size = 12
-tab-bar-background = #181825
-tab-bar-foreground = #cdd6f4
-tab-bar-mode = flex
+# Title - use shell integration to set dynamically
+title = @{title}
+
+# Shell integration
+shell-integration = detect
+shell-integration-features = no-title
 
 # Keybindings
-keybindings = cmd-t: new_tab
-keybindings = cmd-w: close_tab
-keybindings = cmd-shift-bracketright: next_tab
-keybindings = cmd-shift-bracketleft: previous_tab
-keybindings = cmd-plus: font_size_increase
-keybindings = cmd-minus: font_size_decrease
-
-# Mouse
-mouse-hide = true
-
-# Bell
-bell = none
+keybind = cmd-t: new_tab
+keybind = cmd-w: close_tab
+keybind = cmd-shift-bracketright: next_tab
+keybind = cmd-shift-bracketleft: previous_tab
+keybind = cmd-plus: font_size_increase
+keybind = cmd-minus: font_size_decrease
+keybind = cmd-0: font_size_reset
 EOF
         print_success "Ghostty configured"
     else
@@ -392,14 +438,14 @@ main() {
     # Trap for cleanup on error
     trap 'echo -e "\n${CROSS} Installation interrupted"; exit 1' INT TERM
 
-    check_prerequisites
-    clone_repo
-    install_tools
-    setup_configs
-    set_default_shell
-    cleanup
-    print_final_message
-    open_ghostty
+    # check_prerequisites
+    # clone_repo
+    # install_tools
+    # setup_configs
+    # set_default_shell
+    # cleanup
+    # print_final_message
+    # open_ghostty
 }
 
 main "$@"

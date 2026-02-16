@@ -5,19 +5,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This repository is for Ghostty terminal configuration and setup. It supports three installation methods:
-1. **Nix Flakes** - Declarative configuration with Home Manager
-2. **Homebrew** - Using Brewfile
-3. **Shell Script** - Manual setup script
+1. **One-Click Installer** - Dynamic package checking, auto-detects installed tools
+2. **Homebrew + Setup Script** - Interactive setup
+3. **Shell Script Only** - Manual setup
 
 Ghostty is a GPU-accelerated terminal emulator built with Zig.
 
 ## Project Structure
 
 ```
-ghostty-terminal-setup/
+dev-accelerator/
 ├── flake.nix              # Nix flake entry point
 ├── Brewfile               # Homebrew dependencies
-├── setup.sh               # Shell script setup
+├── install.sh             # One-click installer
+├── setup.sh               # Interactive setup script
 ├── README.md              # Setup instructions
 ├── CLAUDE.md              # This file
 ├── home/
@@ -38,19 +39,19 @@ ghostty-terminal-setup/
 
 ## Installation Methods
 
-### Method 1: Nix Flakes (Recommended for Nix users)
+### Method 1: One-Click Installer (Recommended)
 
 ```bash
-# Configure Nix
-mkdir -p ~/.config/nix
-echo 'experimental-features = flakes nix-command' > ~/.config/nix/nix.conf
-
-# Clone and activate
-git clone <repo> && cd repo
-home-manager switch --flake .#<username>@<hostname>
+curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/dev-accelerator/main/install.sh | bash
 ```
 
-### Method 2: Homebrew
+Features:
+- Dynamically checks for installed packages (only installs missing ones)
+- Auto-detects zsh if installed via any method
+- Backs up existing .zshrc before modifications
+- Uses gruvbox-rainbow Starship preset
+
+### Method 2: Homebrew + Setup Script
 
 ```bash
 # Install dependencies
@@ -68,6 +69,14 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+## Key Features
+
+- **Dynamic package checking** - Only installs missing packages via `brew list`
+- **Zsh auto-detection** - Checks PATH, system locations, and Oh My Zsh
+- **Safe .zshrc handling** - Creates backup at `~/.zshrc.backup`
+- **Ghostty config** - Uses valid options only (keybind, shell-integration, etc.)
+- **Starship** - gruvbox-rainbow preset
+
 ## Common Commands
 
 ### Building Ghostty from source
@@ -82,43 +91,19 @@ brew install ghostty
 ```
 
 ### Configuration
-Ghostty uses a configuration file at `~/.config/ghostty/config`. Key configuration options include:
-- `font-family` - Terminal font
-- `font-size` - Font size
-- `theme` - Color theme
-- `shell` - Default shell to use
-
-### Development commands
-```bash
-# Run Ghostty in development mode
-zig build run
-
-# Run tests
-zig build test
-```
-
-## Architecture
-
-This is a terminal emulator configuration project with three setup methods:
-
-- **Nix** - Declarative using flake.nix and Home Manager
-- **Homebrew** - Using Brewfile for dependencies
-- **Shell Script** - Interactive setup.sh script
-
-### Key Components
-
-- **Ghostty** - Terminal emulator (GPU-accelerated)
-- **Zsh** - Shell with plugins
-- **Starship** - Cross-shell prompt
-- **Atuin** - Shell history
-- **Zoxide** - Smart cd
-- **FZF** - Fuzzy finder
+Ghostty uses a configuration file at `~/.config/ghostty/config`. Valid options include:
+- `keybind` - Keybindings (not `keybindings`)
+- `shell-integration` - Enable shell integration
+- `shell-integration-features` - Features like no-title, cursor, sudo
+- `title` - Window title
 
 ## Notes
 
 - This repository is initialized with permissions for ghostty.org, nix.dev, github.io, and github.com
 - Ghostty uses a custom configuration syntax documented at https://ghostty.org/docs/config
-- Tools included: gh, git, fzf, fd, zoxide, yazi, atuin, starship, mise, fnm, uv, jq, thefuck, eza, bat, htop, direnv, pet
+- Tools included: ghostty, zsh, zsh-autosuggestions, zsh-syntax-highlighting, fzf, fd, zoxide, yazi, ripgrep, atuin, starship, mise, fnm, uv, jq, thefuck, eza, bat, htop, direnv, pet
+- Note: `git` is assumed to be pre-installed and not installed by the scripts
+- The Brewfile also includes `knqyf263/pet/pet` for snippet management
 
 ## Testing
 
