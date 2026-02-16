@@ -116,32 +116,26 @@ source_setup() {
     print_section "Loading Setup Functions"
 
     if [ -f "./setup.sh" ]; then
+        # Source setup.sh - this makes its functions available
+        # Note: setup.sh functions will override any local functions with same names
         source ./setup.sh
         print_success "Setup functions loaded"
     else
-        print_warning "setup.sh not found, using built-in functions"
+        print_warning "setup.sh not found"
         return 1
     fi
 }
 
-# Install tools using setup.sh's install_tools function
-install_tools() {
+# Run installation - calls setup.sh functions directly after sourcing
+do_install() {
     print_section "Installing Tools"
 
+    # After sourcing setup.sh, these functions are available in global scope
     # Call setup.sh's install_tools function
-    if declare -f install_tools > /dev/null 2>&1; then
-        install_tools
-    else
-        print_warning "install_tools function not available"
-        return 1
-    fi
+    install_tools
 
     # Call setup.sh's install_oh_my_zsh function
-    if declare -f install_oh_my_zsh > /dev/null 2>&1; then
-        install_oh_my_zsh
-    else
-        print_warning "install_oh_my_zsh function not available"
-    fi
+    install_oh_my_zsh
 
     print_success "All tools installed!"
 }
@@ -266,7 +260,7 @@ main() {
     check_prerequisites
     clone_repo
     source_setup
-    install_tools
+    do_install
     setup_configs
     set_default_shell
     cleanup
