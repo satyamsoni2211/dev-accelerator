@@ -1,0 +1,34 @@
+# Docker Compose for Ghostty Setup Tests
+# Works with both Docker and Podman
+# Usage: docker-compose up --build (or podman-compose up --build)
+
+version: '3.8'
+
+services:
+  nix-test:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.nix
+    container_name: ghostty-test-nix
+    stdin_open: true
+    tty: true
+    # cgroup is required for Nix in Docker
+    cgroup: host
+
+  homebrew-test:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.homebrew
+    container_name: ghostty-test-homebrew
+    stdin_open: true
+    tty: true
+    # Privileged needed for Homebrew Linuxbrew installation
+    privileged: true
+
+  script-test:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.script
+    container_name: ghostty-test-script
+    stdin_open: true
+    tty: true

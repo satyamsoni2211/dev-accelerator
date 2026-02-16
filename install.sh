@@ -1,0 +1,383 @@
+#!/bin/bash
+
+# =============================================================================
+# Ghostty Terminal Setup - One-Click Installer
+# =============================================================================
+# Usage: curl -fsSL https://raw.githubusercontent.com/yourusername/ghostty-terminal-setup/main/install.sh | bash
+# Or: ./install.sh
+# =============================================================================
+
+set -e
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m' # No Color
+
+# Unicode symbols
+CHECK="${GREEN}✓${NC}"
+CROSS="${RED}✗${NC}"
+ARROW="${CYAN}→${NC}"
+BULLET="${MAGENTA}•${NC}"
+STAR="${YELLOW}★${NC}"
+ROCKET="${GREEN}🚀${NC}"
+
+# Variables
+REPO_URL="${REPO_URL:-https://github.com/yourusername/ghostty-terminal-setup.git}"
+INSTALL_DIR="${HOME}/.ghostty-setup"
+GHOSTTY_CONFIG_DIR="${HOME}/.config/ghostty"
+STARSHIP_CONFIG="${HOME}/.config/starship.toml"
+
+# Print banner
+print_banner() {
+    clear
+    echo -e "${CYAN}"
+    echo "╔═══════════════════════════════════════════════════════════════════╗"
+    echo "║                                                                   ║"
+    echo "║   ${WHITE}${BOLD}Ghostty Terminal Setup${NC}${CYAN}                                      ║"
+    echo "║   ${DIM}One-click installer for your dream terminal${NC}${CYAN}                  ║"
+    echo "║                                                                   ║"
+    echo "╚═══════════════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+    echo ""
+}
+
+# Print section header
+print_section() {
+    echo -e "\n${WHITE}${BOLD}━━━ $1 ━━━${NC}\n"
+}
+
+# Print success message
+print_success() {
+    echo -e "${CHECK} ${GREEN}$1${NC}"
+}
+
+# Print info message
+print_info() {
+    echo -e "${ARROW} ${CYAN}$1${NC}"
+}
+
+# Print warning message
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
+
+# Check prerequisites
+check_prerequisites() {
+    print_section "Checking Prerequisites"
+
+    # Check for macOS
+    if [[ "$OSTYPE" != "darwin"* ]]; then
+        echo -e "${CROSS} This script is designed for macOS only."
+        exit 1
+    fi
+    print_success "macOS detected"
+
+    # Check for Homebrew
+    if ! command -v brew &> /dev/null; then
+        print_info "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        print_success "Homebrew installed"
+    else
+        print_success "Homebrew already installed ($(brew --version | head -1))"
+    fi
+
+    # Check for git
+    if ! command -v git &> /dev/null; then
+        print_info "Installing git..."
+        brew install git
+    fi
+    print_success "git available"
+}
+
+# Clone repository
+clone_repo() {
+    print_section "Cloning Repository"
+
+    # Remove old installation if exists
+    if [ -d "$INSTALL_DIR" ]; then
+        print_info "Removing old installation..."
+        rm -rf "$INSTALL_DIR"
+    fi
+
+    print_info "Cloning ${REPO_URL}..."
+    git clone --depth 1 "$REPO_URL" "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
+    print_success "Repository cloned to ${INSTALL_DIR}"
+}
+
+# Install tools
+install_tools() {
+    print_section "Installing Tools"
+
+    print_info "Installing packages from Brewfile..."
+    brew bundle install --file="${INSTALL_DIR}/Brewfile"
+
+    print_success "All tools installed!"
+}
+
+# Setup configurations
+setup_configs() {
+    print_section "Setting Up Configurations"
+
+    # Setup Zsh
+    print_info "Configuring Zsh..."
+    if ! grep -q "# === Ghostty Terminal Setup ===" "${HOME}/.zshrc" 2>/dev/null; then
+        cat >> "${HOME}/.zshrc" << 'EOF'
+
+# === Ghostty Terminal Setup ===
+# Initialized by install.sh
+
+# Set up zoxide
+eval "$(zoxide init zsh)"
+
+# Set up atuin
+eval "$(atuin init zsh)"
+
+# PET snippet manager
+export PET_CONFIG="$HOME/.config/pet/config.toml"
+
+# Configure fzf
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude '.git'"
+
+# Use eza instead of ls
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -l --icons --group-directories-first'
+alias la='eza -la --icons --group-directories-first'
+alias lt='eza --tree --level=2 --icons'
+
+# Git aliases
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias gco='git checkout'
+
+# General aliases
+alias cat='bat --style=auto'
+alias find='fd'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# Correct command with thefuck
+eval "$(thefuck --alias)"
+
+# Enable direnv
+eval "$(direnv hook zsh)"
+
+# Set default editor
+export EDITOR='vim'
+export VISUAL='vim'
+
+# Node.js version manager (fnm)
+eval "$(fnm env)"
+
+# Mise version manager
+eval "$(mise activate zsh)"
+
+# Enable color support
+export CLICOLOR=1
+
+# Starship prompt
+eval "$(starship init zsh)"
+EOF
+        print_success "Zsh configured"
+    else
+        print_warning "Zsh config already exists, skipping"
+    fi
+
+    # Setup Starship
+    print_info "Configuring Starship..."
+    mkdir -p "${HOME}/.config"
+    if [ ! -f "$STARSHIP_CONFIG" ]; then
+        cat > "$STARSHIP_CONFIG" << 'EOF'
+format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character"
+
+[username]
+show_always = true
+style_root = "bold red"
+style_user = "bold blue"
+
+[hostname]
+show_always = true
+style = "bold blue"
+
+[directory]
+style = "bold cyan"
+truncation_symbol = ""
+home_symbol = "~"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+
+[nodejs]
+symbol = "node "
+style = "bold green"
+
+[python]
+symbol = "py "
+style = "bold yellow"
+
+[rust]
+symbol = "rs "
+style = "bold red"
+EOF
+        print_success "Starship configured"
+    else
+        print_warning "Starship config already exists, skipping"
+    fi
+
+    # Setup Ghostty
+    print_info "Configuring Ghostty..."
+    mkdir -p "$GHOSTTY_CONFIG_DIR"
+    if [ ! -f "${GHOSTTY_CONFIG_DIR}/config" ]; then
+        cat > "${GHOSTTY_CONFIG_DIR}/config" << 'EOF'
+# Ghostty Configuration
+
+# Font configuration
+font-family = JetBrains Mono
+font-size = 13
+font-weight = 400
+
+# Catppuccin Mocha theme
+background = #1e1e2e
+foreground = #cdd6f4
+cursor-color = #f5e0dc
+selection-background = #45475a
+
+# Window settings
+window-padding-x = 10
+window-padding-y = 10
+window-padding-display = centered
+window-title = @{title}
+
+# Tab bar
+tab-bar = always
+tab-bar-font-size = 12
+tab-bar-background = #181825
+tab-bar-foreground = #cdd6f4
+tab-bar-mode = flex
+
+# Keybindings
+keybindings = cmd-t: new_tab
+keybindings = cmd-w: close_tab
+keybindings = cmd-shift-bracketright: next_tab
+keybindings = cmd-shift-bracketleft: previous_tab
+keybindings = cmd-plus: font_size_increase
+keybindings = cmd-minus: font_size_decrease
+
+# Mouse
+mouse-hide = true
+
+# Bell
+bell = none
+EOF
+        print_success "Ghostty configured"
+    else
+        print_warning "Ghostty config already exists, skipping"
+    fi
+}
+
+# Set zsh as default shell
+set_default_shell() {
+    print_section "Setting Default Shell"
+
+    ZSH_PATH=$(which zsh)
+    if [ "$SHELL" != "$ZSH_PATH" ]; then
+        print_info "Adding zsh to allowed shells..."
+        echo "$ZSH_PATH" | sudo tee -a /etc/shells > /dev/null 2>&1 || true
+
+        print_info "Changing default shell to zsh..."
+        chsh -s "$ZSH_PATH"
+        print_success "Default shell set to zsh"
+    else
+        print_success "zsh is already your default shell"
+    fi
+}
+
+# Cleanup
+cleanup() {
+    print_section "Cleaning Up"
+
+    print_info "Removing temporary installation directory..."
+    rm -rf "$INSTALL_DIR"
+    print_success "Cleanup complete"
+}
+
+# Final message
+print_final_message() {
+    clear
+    echo -e "${GREEN}"
+    echo "╔═══════════════════════════════════════════════════════════════════╗"
+    echo "║                                                                   ║"
+    echo "║   ${WHITE}${BOLD}${ROCKET}  Setup Complete!  ${ROCKET}${NC}${GREEN}                                        ║"
+    echo "║                                                                   ║"
+    echo "╚═══════════════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+
+    echo -e "${WHITE}${BOLD}Installed Tools:${NC}"
+    echo -e "${BULLET} ${CYAN}Ghostty${NC}        - GPU-accelerated terminal"
+    echo -e "${BULLET} ${CYAN}Zsh${NC}           - Shell with plugins"
+    echo -e "${BULLET} ${CYAN}Starship${NC}       - Cross-shell prompt"
+    echo -e "${BULLET} ${CYAN}Atuin${NC}         - Shell history"
+    echo -e "${BULLET} ${CYAN}Zoxide${NC}        - Smarter cd"
+    echo -e "${BULLET} ${CYAN}FZF${NC}          - Fuzzy finder"
+    echo -e "${BULLET} ${CYAN}Mise${NC}          - Runtime manager"
+    echo -e "${BULLET} ${CYAN}FNM${NC}          - Node.js manager"
+    echo -e "${BULLET} ${CYAN}Eza${NC}          - Modern ls"
+    echo -e "${BULLET} ${CYAN}Bat${NC}           - Modern cat"
+    echo ""
+
+    echo -e "${WHITE}${BOLD}What's Next:${NC}"
+    echo -e "  ${ARROW} Open Ghostty: ${CYAN}open -a Ghostty${NC}"
+    echo -e "  ${ARROW} Or run:       ${CYAN}ghostty${NC}"
+    echo ""
+
+    echo -e "${YELLOW}${DIM}Note: Restart your terminal or run 'exec zsh' to apply changes${NC}"
+    echo ""
+}
+
+# Open Ghostty
+open_ghostty() {
+    print_section "Opening Ghostty"
+
+    if command -v ghostty &> /dev/null; then
+        print_info "Launching Ghostty..."
+        open -a Ghostty || ghostty &
+        sleep 2
+        print_success "Ghostty opened!"
+    else
+        print_warning "Ghostty not found in PATH. Please open manually: open -a Ghostty"
+    fi
+}
+
+# Main
+main() {
+    print_banner
+
+    # Trap for cleanup on error
+    trap 'echo -e "\n${CROSS} Installation interrupted"; exit 1' INT TERM
+
+    check_prerequisites
+    clone_repo
+    install_tools
+    setup_configs
+    set_default_shell
+    cleanup
+    print_final_message
+    open_ghostty
+}
+
+main "$@"

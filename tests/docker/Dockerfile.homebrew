@@ -1,0 +1,28 @@
+# Homebrew-based Ghostty Setup Test
+FROM homebrew/brew:latest
+
+# Arguments
+ARG NO_BREW_UPDATE=false
+
+# Copy files
+WORKDIR /tmp/ghostty
+COPY ../Brewfile /tmp/ghostty/Brewfile
+COPY ../setup.sh /tmp/ghostty/setup.sh
+
+# Test Homebrew
+RUN brew --version
+
+# Test brew bundle
+RUN brew bundle --version
+
+# Test Brewfile content
+RUN cat Brewfile
+
+# Install packages from Brewfile (skip upgrade if NO_BREW_UPDATE is true)
+RUN if [ "$NO_BREW_UPDATE" = "true" ]; then \
+        brew bundle install --file=/tmp/ghostty/Brewfile --no-upgrade; \
+    else \
+        brew bundle install --file=/tmp/ghostty/Brewfile; \
+    fi
+
+CMD ["/bin/bash"]
