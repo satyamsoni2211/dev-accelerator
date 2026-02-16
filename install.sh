@@ -438,14 +438,14 @@ main() {
     # Trap for cleanup on error
     trap 'echo -e "\n${CROSS} Installation interrupted"; exit 1' INT TERM
 
-    # check_prerequisites
-    # clone_repo
-    # install_tools
-    # setup_configs
-    # set_default_shell
-    # cleanup
-    # print_final_message
-    # open_ghostty
+    check_prerequisites
+    clone_repo
+    install_tools
+    setup_configs
+    set_default_shell
+    cleanup
+    print_final_message
+    open_ghostty
 }
 
 main "$@"
