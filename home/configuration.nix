@@ -12,7 +12,6 @@
 
     packages = with pkgs; [
       # Version control
-      git
       gh
 
       # Fuzzy finder and utilities
@@ -20,6 +19,7 @@
       fd_enhanced
       zoxide
       yazi
+      ripgrep
 
       # Snippet tool
       pet
@@ -55,13 +55,14 @@
     file.".config/ghostty/config".text = config.ghostty.config;
   };
 
-  # Enable starship for zsh
+  # Enable starship for zsh with gruvbox-rainbow preset
   programs.starship = {
     enable = true;
     enableBashIntegration = false;
     enableZshIntegration = true;
     settings = {
-      format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$php$java$aws$context$character";
+      # gruvbox-rainbow preset format
+      format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character";
       username = {
         show_always = true;
         style_root = "bold red";

@@ -32,8 +32,6 @@ ROCKET="${GREEN}🚀${NC}"
 # Variables
 REPO_URL="${REPO_URL:-https://github.com/satyamsoni2211/dev-accelerator.git}"
 INSTALL_DIR="${HOME}/.ghostty-setup"
-GHOSTTY_CONFIG_DIR="${HOME}/.config/ghostty"
-STARSHIP_CONFIG="${HOME}/.config/starship.toml"
 
 # Print banner
 print_banner() {
@@ -113,255 +111,82 @@ clone_repo() {
     print_success "Repository cloned to ${INSTALL_DIR}"
 }
 
-# Install tools
+# Source setup.sh to use its functions
+source_setup() {
+    print_section "Loading Setup Functions"
+
+    if [ -f "./setup.sh" ]; then
+        source ./setup.sh
+        print_success "Setup functions loaded"
+    else
+        print_warning "setup.sh not found, using built-in functions"
+        return 1
+    fi
+}
+
+# Install tools using setup.sh's install_tools function
 install_tools() {
     print_section "Installing Tools"
 
-    # Read packages from Brewfile and install only missing ones
-    print_info "Checking and installing missing packages..."
-
-    # Define packages to check (formulae)
-    local formulae=(
-        "zsh"
-        "zsh-autosuggestions"
-        "zsh-syntax-highlighting"
-        "fzf"
-        "fd"
-        "zoxide"
-        "yazi"
-        "ripgrep"
-        "atuin"
-        "starship"
-        "thefuck"
-        "direnv"
-        "mise"
-        "fnm"
-        "uv"
-        "jq"
-        "eza"
-        "bat"
-        "htop"
-    )
-
-    # Define casks to check
-    local casks=(
-        "ghostty"
-    )
-
-    # Check and install missing formulae
-    for formula in "${formulae[@]}"; do
-        if brew list "$formula" &> /dev/null; then
-            print_success "$formula already installed"
-        else
-            print_info "Installing $formula..."
-            brew install "$formula" --quiet
-            print_success "$formula installed"
-        fi
-    done
-
-    # Check and install missing casks
-    for cask in "${casks[@]}"; do
-        if brew list --cask "$cask" &> /dev/null; then
-            print_success "$cask already installed"
-        else
-            print_info "Installing $cask..."
-            brew install --cask "$cask" --quiet
-            print_success "$cask installed"
-        fi
-    done
-
-    # Install Oh My Zsh
-    print_info "Installing Oh My Zsh..."
-    if [ -d "$HOME/.oh-my-zsh" ]; then
-        print_success "Oh My Zsh already installed"
+    # Call setup.sh's install_tools function
+    if declare -f install_tools > /dev/null 2>&1; then
+        install_tools
     else
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-        print_success "Oh My Zsh installed"
+        print_warning "install_tools function not available"
+        return 1
     fi
 
-    # Set ZSH_CUSTOM
-    export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
+    # Call setup.sh's install_oh_my_zsh function
+    if declare -f install_oh_my_zsh > /dev/null 2>&1; then
+        install_oh_my_zsh
+    else
+        print_warning "install_oh_my_zsh function not available"
+    fi
 
     print_success "All tools installed!"
 }
 
-# Setup configurations
+# Setup configurations using setup.sh's functions
 setup_configs() {
     print_section "Setting Up Configurations"
 
     # Setup Zsh
-    print_info "Configuring Zsh..."
-    if ! grep -q "# === Ghostty Terminal Setup ===" "${HOME}/.zshrc" 2>/dev/null; then
-        cat >> "${HOME}/.zshrc" << 'EOF'
-
-# === Ghostty Terminal Setup ===
-# Initialized by install.sh
-
-# Set up zoxide
-eval "$(zoxide init zsh)"
-
-# Set up atuin
-eval "$(atuin init zsh)"
-
-# PET snippet manager
-export PET_CONFIG="$HOME/.config/pet/config.toml"
-
-# Configure fzf
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude '.git'"
-
-# Use eza instead of ls
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -l --icons --group-directories-first'
-alias la='eza -la --icons --group-directories-first'
-alias lt='eza --tree --level=2 --icons'
-
-# Git aliases
-alias g='git'
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git pull'
-alias gd='git diff'
-alias gco='git checkout'
-
-# General aliases
-alias cat='bat --style=auto'
-alias find='fd'
-alias ..='cd ..'
-alias ...='cd ../..'
-
-# Correct command with thefuck
-eval "$(thefuck --alias)"
-
-# Enable direnv
-eval "$(direnv hook zsh)"
-
-# Set default editor
-export EDITOR='vim'
-export VISUAL='vim'
-
-# Node.js version manager (fnm)
-eval "$(fnm env)"
-
-# Mise version manager
-eval "$(mise activate zsh)"
-
-# Enable color support
-export CLICOLOR=1
-
-# Starship prompt
-eval "$(starship init zsh)"
-EOF
-        print_success "Zsh configured"
-    else
-        print_warning "Zsh config already exists, skipping"
+    if declare -f setup_zsh > /dev/null 2>&1; then
+        setup_zsh
     fi
 
     # Setup Starship
-    print_info "Configuring Starship..."
-    mkdir -p "${HOME}/.config"
-    if [ ! -f "$STARSHIP_CONFIG" ]; then
-        starship preset gruvbox-rainbow -o "$STARSHIP_CONFIG" 2>/dev/null || {
-            # Fallback if preset command not available
-            cat > "$STARSHIP_CONFIG" << 'EOF'
-format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character"
-
-[username]
-show_always = true
-style_root = "bold red"
-style_user = "bold blue"
-
-[hostname]
-show_always = true
-style = "bold blue"
-
-[directory]
-style = "bold cyan"
-truncation_symbol = ""
-home_symbol = "~"
-
-[character]
-success_symbol = "[➜](bold green)"
-error_symbol = "[✗](bold red)"
-
-[nodejs]
-symbol = "node "
-style = "bold green"
-
-[python]
-symbol = "py "
-style = "bold yellow"
-
-[rust]
-symbol = "rs "
-style = "bold red"
-EOF
-        }
-        print_success "Starship configured"
-    else
-        print_warning "Starship config already exists, skipping"
+    if declare -f setup_starship > /dev/null 2>&1; then
+        setup_starship
     fi
 
     # Setup Ghostty
-    print_info "Configuring Ghostty..."
-    mkdir -p "$GHOSTTY_CONFIG_DIR"
-    if [ ! -f "${GHOSTTY_CONFIG_DIR}/config" ]; then
-        cat > "${GHOSTTY_CONFIG_DIR}/config" << 'EOF'
-# Ghostty Configuration
-
-# Font configuration
-font-family = JetBrains Mono
-font-size = 13
-
-# Catppuccin Mocha theme
-background = #1e1e2e
-foreground = #cdd6f4
-cursor-color = #f5e0dc
-selection-background = #45475a
-selection-foreground = #cdd6f4
-
-# Window settings
-window-padding-x = 10
-window-padding-y = 10
-
-# Title - use shell integration to set dynamically
-title = @{title}
-
-# Shell integration
-shell-integration = detect
-shell-integration-features = no-title
-
-# Keybindings
-keybind = cmd-t: new_tab
-keybind = cmd-w: close_tab
-keybind = cmd-shift-bracketright: next_tab
-keybind = cmd-shift-bracketleft: previous_tab
-keybind = cmd-plus: font_size_increase
-keybind = cmd-minus: font_size_decrease
-keybind = cmd-0: font_size_reset
-EOF
-        print_success "Ghostty configured"
-    else
-        print_warning "Ghostty config already exists, skipping"
+    if declare -f setup_ghostty > /dev/null 2>&1; then
+        setup_ghostty
     fi
+
+    print_success "Configurations complete!"
 }
 
 # Set zsh as default shell
 set_default_shell() {
     print_section "Setting Default Shell"
 
-    ZSH_PATH=$(which zsh)
-    if [ "$SHELL" != "$ZSH_PATH" ]; then
-        print_info "Adding zsh to allowed shells..."
-        echo "$ZSH_PATH" | sudo tee -a /etc/shells > /dev/null 2>&1 || true
-
-        print_info "Changing default shell to zsh..."
-        chsh -s "$ZSH_PATH"
-        print_success "Default shell set to zsh"
+    if declare -f set_zsh_default > /dev/null 2>&1; then
+        set_zsh_default
     else
-        print_success "zsh is already your default shell"
+        # Fallback implementation
+        ZSH_PATH=$(which zsh)
+        if [ "$SHELL" != "$ZSH_PATH" ]; then
+            print_info "Adding zsh to allowed shells..."
+            echo "$ZSH_PATH" | sudo tee -a /etc/shells > /dev/null 2>&1 || true
+
+            print_info "Changing default shell to zsh..."
+            chsh -s "$ZSH_PATH"
+            print_success "Default shell set to zsh"
+        else
+            print_success "zsh is already your default shell"
+        fi
     fi
 }
 
@@ -440,6 +265,7 @@ main() {
 
     check_prerequisites
     clone_repo
+    source_setup
     install_tools
     setup_configs
     set_default_shell

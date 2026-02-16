@@ -4,12 +4,10 @@
 # Terminal
 cask "ghostty"
 
-# Version control
-brew "git"
+# Version control (git assumed pre-installed)
 brew "gh"
 
-# Shell
-brew "zsh"
+# Shell (zsh assumed pre-installed)
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 

@@ -98,8 +98,19 @@ install_tools() {
     done
 
     # Check and install missing casks
+    # For ghostty, also check if command exists (may be installed via DMG/pkg)
     for cask in "${casks[@]}"; do
+        local is_installed=false
+
+        # Check via brew cask first
         if brew list --cask "$cask" &> /dev/null; then
+            is_installed=true
+        # For ghostty, also check if command exists (installed via DMG/pkg)
+        elif [ "$cask" = "ghostty" ] && command -v ghostty &> /dev/null; then
+            is_installed=true
+        fi
+
+        if [ "$is_installed" = true ]; then
             echo -e "${GREEN}✓${NC} $cask already installed"
         else
             echo -e "${YELLOW}→${NC} Installing $cask..."
@@ -109,6 +120,29 @@ install_tools() {
     done
 
     echo -e "${GREEN}All tools checked and installed successfully!${NC}"
+}
+
+# Install Oh My Zsh
+install_oh_my_zsh() {
+    echo -e "${YELLOW}Installing Oh My Zsh...${NC}"
+
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+        echo -e "${GREEN}✓${NC} Oh My Zsh already installed"
+    else
+        echo -e "${YELLOW}Note:${NC} Any previous .zshrc will be renamed to .zshrc.pre-oh-my-zsh"
+        echo -e "${YELLOW}After installation, you can move the configuration you want to preserve into the new .zshrc${NC}"
+        echo ""
+
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+        # Set ZSH_CUSTOM
+        export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
+
+        echo -e "${GREEN}✓${NC} Oh My Zsh installed"
+    fi
+
+    # Set ZSH_CUSTOM even if already installed
+    export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 }
 
 # Setup Zsh configuration
@@ -361,6 +395,7 @@ main() {
     case $choice in
         1)
             install_tools
+            install_oh_my_zsh
             setup_zsh
             setup_starship
             setup_ghostty
@@ -371,11 +406,13 @@ main() {
             ;;
         2)
             install_tools
+            install_oh_my_zsh
             echo ""
             echo -e "${GREEN}=== Tools Installed! ===${NC}"
             echo "Run option 3 to configure the tools."
             ;;
         3)
+            install_oh_my_zsh
             setup_zsh
             setup_starship
             setup_ghostty
@@ -395,4 +432,7 @@ main() {
     esac
 }
 
-main "$@"
+# Only run main if script is executed directly (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

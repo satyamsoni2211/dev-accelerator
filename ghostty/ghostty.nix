@@ -5,7 +5,6 @@
     # Font configuration
     font-family = "JetBrains Mono";
     font-size = 13;
-    font-weight = 400;
     font-features = {
       "JetBrains Mono" = [ "+calt" "+liga" "+dlig" ];
     };
@@ -20,27 +19,20 @@
     # Window settings
     window-padding-x = 10;
     window-padding-y = 10;
-    window-padding-display = "centered";
     window-opacity = 1.0;
-    window-title = "@{title}";
 
-    # Tab bar
-    tab-bar = "always";
-    tab-bar-font-size = 12;
-    tab-bar-background = "#181825";
-    tab-bar-foreground = "#cdd6f4";
-    tab-bar-mode = "flex";
-    tab-title = "@{window-title}";
+    # Title - use shell integration to set dynamically
+    title = "@{title}";
 
     # Shell
     shell = "${pkgs.zsh}/bin/zsh";
-    shell-integration-features = "no-cursor";
+    shell-integration = "detect";
+    shell-integration-features = "no-title";
 
-    # Keybindings
-    keybindings = {
+    # Keybindings (use keybind, not keybindings)
+    keybind = {
       # New tab
       "cmd-t" = "new_tab";
-      "cmd-n" = "new_tab";
 
       # Close tab
       "cmd-w" = "close_tab";
@@ -49,26 +41,10 @@
       "cmd-shift-bracketright" = "next_tab";
       "cmd-shift-bracketleft" = "previous_tab";
 
-      # New window
-      "cmd-shift-n" = "new_window";
-
-      # Copy/Paste
-      "cmd-c" = "copy";
-      "cmd-v" = "paste";
-
       # Zoom
       "cmd-plus" = "font_size_increase";
       "cmd-minus" = "font_size_decrease";
       "cmd-0" = "font_size_reset";
     };
-
-    # Performance
-    # threaded-renderer = true;
-
-    # Mouse
-    mouse-hide = true;
-
-    # Bell
-    bell = "none";
   };
 }
