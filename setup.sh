@@ -335,31 +335,11 @@ setup_ghostty() {
 
     # Create ghostty config only if it doesn't exist
     if [ ! -f "$HOME/.config/ghostty/config" ]; then
-        cat > "$HOME/.config/ghostty/config" << 'EOF'
-# Ghostty Configuration
-
-# Font configuration
-font-family = JetBrains Mono
-font-size = 13
-
-# Catppuccin Mocha theme
-background = #1e1e2e
-foreground = #cdd6f4
-cursor-color = #f5e0dc
-selection-background = #45475a
-selection-foreground = #cdd6f4
-
-# Window settings
-window-padding-x = 10
-window-padding-y = 10
-
-
-# Shell integration
-shell-integration = detect
-EOF
-        echo -e "${GREEN}Ghostty configuration created!${NC}"
+        cp ghostty_config "$HOME/.config/ghostty/config"
+        echo -e "${GREEN}Ghostty configuration created!${NC}\n"
     else
-        echo -e "${YELLOW}Ghostty config already exists, skipping.${NC}"
+        # backup existing config if it exists and hasn't been backed up
+        echo -e "${YELLOW}Ghostty configuration already exists.${NC}"
     fi
 }
 
