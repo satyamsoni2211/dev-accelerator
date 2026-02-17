@@ -35,6 +35,7 @@
       fnm
 
       # Python tools
+      pyenv
       uv
 
       # JSON processor

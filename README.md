@@ -209,6 +209,7 @@ Edit `zsh/zshrc.nix` to:
 | `starship` | Cross-shell prompt (gruvbox-rainbow) |
 | `mise` | Runtime version manager |
 | `fnm` | Node.js version manager |
+| `pyenv` | Python version manager |
 | `uv` | Python package manager |
 | `jq` | JSON processor |
 | `thefuck` | Command correction |

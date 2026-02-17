@@ -32,6 +32,7 @@ brew "mise"
 brew "fnm"
 
 # Python tools
+brew "pyenv"
 brew "uv"
 
 # JSON processor
