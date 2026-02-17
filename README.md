@@ -194,30 +194,29 @@ Edit `zsh/zshrc.nix` to:
 
 ## Tools Included
 
-| Tool | Description |
-|------|-------------|
-| `ghostty` | GPU-accelerated terminal emulator |
-| `zsh` | Shell with plugins (auto-detected) |
-| `zsh-autosuggestions` | Zsh plugin for command suggestions |
-| `zsh-syntax-highlighting` | Zsh plugin for syntax highlighting |
-| `fzf` | Fuzzy finder |
-| `fd` | Fast file finder |
-| `zoxide` | Smarter cd command |
-| `yazi` | Blazing fast file manager |
-| `ripgrep` | Fast grep alternative |
-| `atuin` | Shell history with sync |
-| `starship` | Cross-shell prompt (gruvbox-rainbow) |
-| `mise` | Runtime version manager |
-| `fnm` | Node.js version manager |
-| `pyenv` | Python version manager |
-| `uv` | Python package manager |
-| `jq` | JSON processor |
-| `thefuck` | Command correction |
-| `eza` | Modern ls replacement |
-| `bat` | Modern cat replacement |
-| `htop` | Interactive process viewer |
-| `direnv` | Environment variable loader |
-| `pet` | Snippet manager |
+| Tool | Description | Documentation Link |
+|------|-------------|-------------------|
+| `ghostty` | GPU-accelerated terminal emulator | https://ghostty.org/docs |
+| `zsh` | Shell with plugins (auto-detected) | https://zsh.sourceforge.io/Doc/Release/index.html |
+| `zsh-autosuggestions` | Zsh plugin for command suggestions | https://github.com/zsh-users/zsh-autosuggestions |
+| `zsh-syntax-highlighting` | Zsh plugin for syntax highlighting | https://github.com/zsh-users/zsh-syntax-highlighting |
+| `fzf` | Fuzzy finder | https://github.com/junegunn/fzf |
+| `fd` | Fast file finder | https://github.com/sharkdp/fd |
+| `zoxide` | Smarter cd command | https://github.com/ajeetdsouza/zoxide |
+| `yazi` | Blazing fast file manager | https://yazi-rs.github.io |
+| `ripgrep` | Fast grep alternative | https://github.com/BurntSushi/ripgrep |
+| `atuin` | Shell history with sync | https://docs.atuin.sh |
+| `starship` | Cross-shell prompt (gruvbox-rainbow) | https://starship.rs |
+| `mise` | Runtime version manager | https://mise.jdx.dev |
+| `fnm` | Node.js version manager | https://github.com/Schniz/fnm |
+| `pyenv` | Python version manager | https://github.com/pyenv/pyenv |
+| `uv` | Python package manager | https://docs.astral.sh/uv |
+| `jq` | JSON processor | https://jqlang.org |
+| `thefuck` | Command correction | https://github.com/nvbn/thefuck |
+| `eza` | Modern ls replacement | https://github.com/eza-community/eza |
+| `bat` | Modern cat replacement | https://github.com/sharkdp/bat |
+| `htop` | Interactive process viewer | https://htop.dev |
+| `direnv` | Environment variable loader | https://direnv.net |
 
 > Note: `git` is assumed to be pre-installed on all systems and is not installed by the scripts.
 

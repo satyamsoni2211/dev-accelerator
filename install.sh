@@ -220,7 +220,6 @@ print_final_message() {
     printf "${BULLET} ${CYAN}Eza${NC}          - Modern ls\n"
     printf "${BULLET} ${CYAN}Bat${NC}           - Modern cat\n"
     printf "${BULLET} ${CYAN}Yazi${NC}          - File manager\n"
-    printf "${BULLET} ${CYAN}Pet${NC}           - Snippet manager\n"
     printf "${BULLET} ${CYAN}Htop${NC}          - Process viewer\n"
     printf "${BULLET} ${CYAN}Direnv${NC}        - Environment manager\n"
     printf "${BULLET} ${CYAN}Jq${NC}            - JSON processor\n"

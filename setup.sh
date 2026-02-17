@@ -80,6 +80,7 @@ install_tools() {
         "bat"
         "htop"
         "pyenv"
+        "lazygit"
     )
 
     # Define casks to check
