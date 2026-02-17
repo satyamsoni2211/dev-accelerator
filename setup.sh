@@ -149,6 +149,10 @@ install_oh_my_zsh() {
 setup_zsh() {
     echo -e "${YELLOW}Setting up Zsh configuration...${NC}"
 
+    # Create config directory
+    local config_dir="$HOME/.config/ghostty-setup"
+    mkdir -p "$config_dir"
+
     # Backup existing .zshrc if it exists and hasn't been backed up
     if [ -f "$HOME/.zshrc" ] && [ ! -f "$HOME/.zshrc.backup" ]; then
         cp "$HOME/.zshrc" "$HOME/.zshrc.backup"
@@ -160,117 +164,27 @@ setup_zsh() {
         touch "$HOME/.zshrc"
     fi
 
-    # Marker to track if our config was added
-    MARKER="# === Ghostty Terminal Setup ==="
+    # Create the separate config file
+    if [ ! -f "$config_dir/zsh.env" ]; then
+        cp ./zsh.env "$config_dir/zsh.env"
+        echo -e "${GREEN}✓${NC} Created config file at $config_dir/zsh.env"
+    else
+        echo -e "${YELLOW}Config file already exists, skipping.${NC}"
+    fi
 
-    # Only add if marker not present
-    if ! grep -q "$MARKER" "$HOME/.zshrc" 2>/dev/null; then
+    # Add source line to .zshrc only if not present
+    local source_line="# Source Ghostty Terminal Setup config"
+    if ! grep -q "ghostty-setup/zsh.env" "$HOME/.zshrc" 2>/dev/null; then
         cat >> "$HOME/.zshrc" << 'EOF'
 
 # === Ghostty Terminal Setup ===
 # Initialized by setup.sh
 
-# --- zsh-autosuggestions Configuration ---
-# Fish-like autosuggestions based on history
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# Optimization: Limit buffer size for better performance
-export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-
-# Enable async mode for faster suggestions
-export ZSH_AUTOSUGGEST_USE_ASYNC=1
-
-# Customize suggestion color (subtle gray)
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
-
-# Suggest from history and completion
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
-# --- zsh-syntax-highlighting Configuration ---
-# Must be loaded AFTER zsh-autosuggestions
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Set up zoxide
-eval "$(zoxide init zsh)"
-
-# Set up atuin
-eval "$(atuin init zsh)"
-
-# PET snippet manager
-export PET_CONFIG="$HOME/.config/pet/config.toml"
-
-# --- fzf Configuration ---
-# Fuzzy finder for files, history, and more
-source <(fzf --zsh)
-
-# Configure fzf
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
-export FZF_ALT_C_OPTS="--preview 'eza --icons --color=always --tree --level=2 {}'"
-export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude '.git'"
-
-# Use eza instead of ls
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -l --icons --group-directories-first'
-alias la='eza -la --icons --group-directories-first'
-alias lt='eza --tree --level=2 --icons'
-
-# Git aliases
-alias g='git'
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git pull'
-alias gd='git diff'
-alias gco='git checkout'
-alias gb='git branch'
-
-# General aliases
-alias cat='bat --style=auto'
-alias find='fd'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-
-# Correct command with thefuck
-eval "$(thefuck --alias)"
-
-# Enable direnv
-eval "$(direnv hook zsh)"
-
-# Set default editor
-export EDITOR='vim'
-export VISUAL='vim'
-
-# Node.js version manager (fnm)
-eval "$(fnm env)"
-
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	command yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
-}
-
-# Starship prompt
-eval "$(starship init zsh)"
-
-# Mise version manager
-eval "$(mise activate zsh)"
-
-# Enable color support
-export CLICOLOR=1
-export LSCOLORS=ExFxBxDxCxegedabagacad
-
-# Set language
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
 EOF
-        echo -e "${GREEN}Zsh configuration added!${NC}"
+        echo "source \"$config_dir/zsh.env\"" >> "$HOME/.zshrc"
+        echo -e "${GREEN}✓${NC} Added source line to .zshrc"
     else
-        echo -e "${YELLOW}Zsh configuration already exists, skipping.${NC}"
+        echo -e "${YELLOW}Source line already in .zshrc, skipping.${NC}"
     fi
 }
 
