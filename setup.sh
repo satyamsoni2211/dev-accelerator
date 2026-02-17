@@ -254,7 +254,12 @@ setup_ghostty() {
         echo -e "${GREEN}Ghostty configuration created!${NC}\n"
     else
         # backup existing config if it exists and hasn't been backed up
-        echo -e "${YELLOW}Ghostty configuration already exists.${NC}"
+        if [ ! -f "$HOME/.config/ghostty/config.backup" ]; then
+            cp "$HOME/.config/ghostty/config" "$HOME/.config/ghostty/config.backup"
+            echo -e "${GREEN}✓${NC} Backed up existing Ghostty config to config.backup"
+        fi
+        cp ghostty_config "$HOME/.config/ghostty/config"
+        echo -e "${GREEN}Ghostty configuration updated!${NC}\n"
     fi
 }
 
