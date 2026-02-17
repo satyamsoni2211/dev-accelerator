@@ -79,6 +79,7 @@ install_tools() {
         "eza"
         "bat"
         "htop"
+        "pyenv"
     )
 
     # Define casks to check
