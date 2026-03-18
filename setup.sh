@@ -26,9 +26,27 @@ fi
 check_brew() {
     if ! command -v brew &> /dev/null; then
         echo -e "${YELLOW}Homebrew is not installed.${NC}"
-        echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        echo -e "${GREEN}Homebrew installed successfully!${NC}"
+        echo "Attempting to install Homebrew..."
+
+        # Run the installer and capture output
+        if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+            # Verify installation
+            if command -v brew &> /dev/null; then
+                echo -e "${GREEN}Homebrew installed successfully!${NC}"
+            else
+                echo -e "${RED}Homebrew installation completed but not found in PATH.${NC}"
+                echo "Please add Homebrew to your PATH and re-run this script:"
+                echo "  eval \"\$(/opt/homebrew/bin/brew shellenv)\""
+                exit 1
+            fi
+        else
+            echo -e "${RED}Failed to install Homebrew.${NC}"
+            echo "Please install Homebrew manually:"
+            echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}Homebrew is installed: $(brew --version | head -1)${NC}"
     fi
 }
 
@@ -81,6 +99,15 @@ install_tools() {
         "htop"
         "pyenv"
         "lazygit"
+        # New productivity tools (2025/2026)
+        "bottom"
+        "tealdeer"
+        "delta"
+        "tokei"
+        "zellij"
+        "gitui"
+        "procs"
+        "ouch"
     )
 
     # Define casks to check
@@ -94,8 +121,12 @@ install_tools() {
             echo -e "${GREEN}✓${NC} $formula already installed"
         else
             echo -e "${YELLOW}→${NC} Installing $formula..."
-            brew install "$formula" --quiet
-            echo -e "${GREEN}✓${NC} $formula installed"
+            if brew install "$formula" --quiet 2>&1; then
+                echo -e "${GREEN}✓${NC} $formula installed"
+            else
+                echo -e "${RED}✗${NC} Failed to install $formula, continuing..."
+                # Continue with other tools instead of failing entirely
+            fi
         fi
     done
 
