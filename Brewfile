@@ -42,3 +42,13 @@ brew "jq"
 brew "eza"
 brew "bat"
 brew "htop"
+
+# New productivity tools (2025/2026)
+brew "bottom"      # Modern system monitor (htop alternative)
+brew "tealdeer"    # Fast tldr client
+brew "delta"       # Git pager with syntax highlighting
+brew "tokei"       # Code statistics
+brew "zellij"      # Terminal workspace (tmux alternative)
+brew "gitui"       # Git TUI
+brew "procs"       # Modern ps replacement
+brew "ouch"        # All-in-one compression tool
