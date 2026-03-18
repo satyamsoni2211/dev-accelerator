@@ -30,6 +30,8 @@ chmod +x install.sh
 - **Mise** - Runtime manager
 - **Dynamic package checking** - Only installs missing packages
 - **Safe .zshrc handling** - Creates backup before modifications
+- **Improved error handling** - Graceful handling of installation failures
+- **2025/2026 CLI tools** - Latest productivity tools included
 
 ## Installation Methods
 
@@ -217,6 +219,20 @@ Edit `zsh/zshrc.nix` to:
 | `bat` | Modern cat replacement | https://github.com/sharkdp/bat |
 | `htop` | Interactive process viewer | https://htop.dev |
 | `direnv` | Environment variable loader | https://direnv.net |
+| `lazygit` | TUI for git | https://github.com/jesseduffield/lazygit |
+
+### New Productivity Tools (2025/2026)
+
+| Tool | Description | Documentation Link |
+|------|-------------|-------------------|
+| `bottom` (btm) | Modern system monitor (htop alternative) | https://github.com/ClementTsang/bottom |
+| `tealdeer` | Fast tldr client | https://github.com/dandavison/tealdeer |
+| `delta` | Git pager with syntax highlighting | https://github.com/dandavison/delta |
+| `tokei` | Code statistics (lines of code) | https://github.com/XAMPPRocky/tokei |
+| `zellij` | Terminal workspace (tmux alternative) | https://zellij.dev |
+| `gitui` | Git TUI | https://github.com/extrawurst/gitui |
+| `procs` | Modern ps replacement | https://github.com/dalance/procs |
+| `ouch` | All-in-one compression tool | https://github.com/ouch-org/ouch |
 
 > Note: `git` is assumed to be pre-installed on all systems and is not installed by the scripts.
 
