@@ -184,6 +184,11 @@ setup_configs() {
         setup_ghostty
     fi
 
+    # Setup Tmux
+    if declare -f setup_tmux > /dev/null 2>&1; then
+        setup_tmux
+    fi
+
     print_success "Configurations complete!"
 }
 

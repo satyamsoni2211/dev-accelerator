@@ -26,6 +26,7 @@ brew "atuin"
 brew "starship"
 brew "thefuck"
 brew "direnv"
+brew "tmux"
 
 # Node.js managers
 brew "mise"

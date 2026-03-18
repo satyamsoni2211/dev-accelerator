@@ -108,6 +108,7 @@ install_tools() {
         "gitui"
         "procs"
         "ouch"
+        "tmux"
     )
 
     # Define casks to check
@@ -295,6 +296,36 @@ setup_ghostty() {
     fi
 }
 
+# Setup Tmux configuration
+setup_tmux() {
+    echo -e "${YELLOW}Setting up Tmux configuration...${NC}"
+
+    # Check if .tmux.conf exists in the repo
+    if [ ! -f ".tmux.conf" ]; then
+        echo -e "${YELLOW}No .tmux.conf found in repository, skipping.${NC}"
+        return
+    fi
+
+    # Backup existing .tmux.conf if it exists
+    if [ -f "$HOME/.tmux.conf" ] && [ ! -f "$HOME/.tmux.conf.backup" ]; then
+        cp "$HOME/.tmux.conf" "$HOME/.tmux.conf.backup"
+        echo -e "${GREEN}✓${NC} Backed up existing .tmux.conf to .tmux.conf.backup"
+    fi
+
+    # Copy the tmux config
+    cp .tmux.conf "$HOME/.tmux.conf"
+    echo -e "${GREEN}✓${NC} Tmux configuration copied to ~/.tmux.conf"
+
+    # Install TPM (Tmux Plugin Manager) if not present
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo -e "${YELLOW}→${NC} Installing Tmux Plugin Manager (TPM)..."
+        git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+        echo -e "${GREEN}✓${NC} TPM installed"
+    else
+        echo -e "${GREEN}✓${NC} TPM already installed"
+    fi
+}
+
 # Set zsh as default shell
 set_zsh_default() {
     echo -e "${YELLOW}Setting Zsh as default shell...${NC}"
@@ -331,6 +362,7 @@ main() {
             setup_zsh
             setup_starship
             setup_ghostty
+            setup_tmux
             set_zsh_default
             echo ""
             echo -e "${GREEN}=== Setup Complete! ===${NC}"
@@ -348,6 +380,7 @@ main() {
             setup_zsh
             setup_starship
             setup_ghostty
+            setup_tmux
             set_zsh_default
             echo ""
             echo -e "${GREEN}=== Configuration Complete! ===${NC}"
