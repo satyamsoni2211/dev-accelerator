@@ -78,11 +78,30 @@ check_prerequisites() {
     fi
     print_success "macOS detected"
 
-    # Check for Homebrew
+    # Check for Homebrew with improved error handling
     if ! command -v brew &> /dev/null; then
+        print_warning "Homebrew not found in PATH"
         print_info "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        print_success "Homebrew installed"
+
+        # Run the Homebrew installer with error handling
+        if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+            print_success "Homebrew installed"
+
+            # Verify brew is now available
+            if command -v brew &> /dev/null; then
+                print_success "Homebrew is now available"
+            else
+                print_warning "Homebrew installed but not in PATH. Please restart your terminal and run this script again."
+                print_info "Alternatively, add Homebrew to your PATH:"
+                printf "  ${CYAN}eval \"\$(/opt/homebrew/bin/brew shellenv)\"${NC}\n"
+                exit 1
+            fi
+        else
+            echo -e "${CROSS} Failed to install Homebrew"
+            print_info "Please install Homebrew manually and re-run this script:"
+            printf "  ${CYAN}/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}\n"
+            exit 1
+        fi
     else
         print_success "Homebrew already installed ($(brew --version | head -1))"
     fi
@@ -90,9 +109,15 @@ check_prerequisites() {
     # Check for git
     if ! command -v git &> /dev/null; then
         print_info "Installing git..."
-        brew install git
+        if brew install git; then
+            print_success "git installed"
+        else
+            echo -e "${CROSS} Failed to install git"
+            exit 1
+        fi
+    else
+        print_success "git available"
     fi
-    print_success "git available"
 }
 
 # Clone repository
