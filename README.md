@@ -1,6 +1,56 @@
-# dev-accelerator - Developer Productivity Terminal Setup
+# dev-accelerator
 
-A configuration to install and set up Ghostty terminal on macOS with all required plugins and tools. Supports three installation methods: One-click installer, Homebrew, and shell script.
+> ⚡ A one-command macOS terminal setup — Ghostty + Zsh + 30 modern CLI tools, ready in minutes.
+
+```
+╭─────────────────────────────────────────────────────────────────────────╮
+│  dev-accelerator  ─  Ghostty + Zsh + 30 modern CLI tools                │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ❯ ls                                                                    │
+│  󰉋 src/   󰉋 tests/   󰉋 docs/    setup.sh   install.sh   README.md      │
+│                                                                          │
+│  ❯ git log --oneline                                                     │
+│  a3f1c2e  feat: add zoxide smart cd integration                          │
+│  b89d041  fix: backup .zshrc before modification                         │
+│  c12e8a3  chore: add atuin shell history sync                            │
+│                                                                          │
+│  ❯ btm                          ❯ fzf                                    │
+│  CPU  [████████░░░░] 42%        ╭──────────────────────╮                 │
+│  MEM  [█████░░░░░░░] 51%        │ > install.sh         │                 │
+│  NET  ↑ 1.2 MB/s ↓ 840 KB/s    │   setup.sh           │                 │
+│                                 │   flake.nix          │                 │
+│  ❯ z dev   # zoxide jump        ╰──────────────────────╯                 │
+│  ~/projects/dev-accelerator                                              │
+│                                                                          │
+│  satyam@macbook  ~/projects/dev-accelerator  main ✓  took 0.3s          │
+╰─────────────────────────────────────────────────────────────────────────╯
+```
+
+<p align="center">
+  <a href="https://github.com/satyamsoni2211/dev-accelerator/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/satyamsoni2211/dev-accelerator" alt="License: MIT">
+  </a>
+  <a href="https://github.com/satyamsoni2211/dev-accelerator/stargazers">
+    <img src="https://img.shields.io/github/stars/satyamsoni2211/dev-accelerator?style=social" alt="GitHub Stars">
+  </a>
+  <img src="https://img.shields.io/badge/platform-macOS-lightgrey?logo=apple" alt="macOS">
+  <img src="https://img.shields.io/badge/shell-zsh-green?logo=gnu-bash" alt="Zsh">
+</p>
+
+---
+
+## Why dev-accelerator?
+
+Setting up a productive macOS terminal from scratch takes hours — installing tools one by one, configuring plugins, tweaking dotfiles. **dev-accelerator** does it all in a single command:
+
+- ✅ Ghostty GPU-accelerated terminal with a beautiful Catppuccin theme
+- ✅ Zsh with autosuggestions, syntax highlighting, and smart history
+- ✅ 30+ modern CLI tools replacing outdated Unix defaults
+- ✅ Smart installer — only installs what's missing, backs up your existing `.zshrc`
+- ✅ Three setup paths: one-click, Homebrew, or Nix Flakes
+
+---
 
 ## Quick Install
 
@@ -9,6 +59,7 @@ curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/dev-accelerator/main
 ```
 
 Or download and run manually:
+
 ```bash
 curl -fsSL https://github.com/satyamsoni2211/dev-accelerator/archive/main.zip -o dev-accelerator.zip
 unzip dev-accelerator.zip
@@ -17,46 +68,38 @@ chmod +x install.sh
 ./install.sh
 ```
 
-> Note: Replace `satyamsoni2211` with your GitHub username after forking this repo.
+> **Note:** After forking, replace `satyamsoni2211` with your GitHub username in the curl URL.
+
+---
 
 ## Features
 
-- **Ghostty** - GPU-accelerated terminal emulator
-- **Zsh** - Shell with plugins (auto-detects if already installed)
-- **Starship** - Cross-shell prompt with gruvbox-rainbow preset
-- **Atuin** - Shell history with sync
-- **Zoxide** - Smarter cd command
-- **FZF** - Fuzzy finder
-- **Mise** - Runtime manager
-- **Dynamic package checking** - Only installs missing packages
-- **Safe .zshrc handling** - Creates backup before modifications
-- **Improved error handling** - Graceful handling of installation failures
-- **2025/2026 CLI tools** - Latest productivity tools included
+- **Ghostty** — GPU-accelerated terminal emulator with Catppuccin theme
+- **Zsh** — shell with plugins (auto-detects if already installed)
+- **Starship** — cross-shell prompt with gruvbox-rainbow preset
+- **Atuin** — shell history with sync across machines
+- **Zoxide** — smarter `cd` that learns your habits
+- **FZF** — fuzzy finder wired into your shell
+- **Mise** — runtime version manager for Node, Python, Ruby, and more
+- **Dynamic package checking** — only installs what's missing
+- **Safe `.zshrc` handling** — creates a backup before any modifications
+- **Improved error handling** — graceful recovery from install failures
+
+---
 
 ## Installation Methods
 
-Choose one of the three methods below:
-
 ### Method 1: One-Click Installer (Recommended)
-
-The fastest way to get everything set up:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/satyamsoni2211/dev-accelerator/main/install.sh | bash
 ```
 
-This script:
-- Checks for Homebrew and installs if needed
-- Dynamically checks and installs only missing packages
-- Configures Zsh with all plugins
-- Sets up Starship with gruvbox-rainbow theme
-- Creates Ghostty configuration with Catppuccin theme
-- Backs up existing .zshrc before modifications
-- Sets Zsh as default shell
+This script checks for Homebrew, installs only missing packages, configures Zsh with all plugins, sets up Starship with gruvbox-rainbow, creates a Ghostty config with Catppuccin, backs up your existing `.zshrc`, and sets Zsh as your default shell.
+
+---
 
 ### Method 2: Homebrew + Setup Script
-
-The easiest way to get started:
 
 ```bash
 # Install Homebrew if you haven't already
@@ -70,96 +113,96 @@ cd dev-accelerator
 ./setup.sh
 ```
 
+---
+
 ### Method 3: Manual Setup Script Only
 
-If you prefer manual installation:
-
 ```bash
-# Clone this repository
 git clone https://github.com/satyamsoni2211/dev-accelerator.git
 cd dev-accelerator
-
-# Make script executable
 chmod +x setup.sh
-
-# Run the setup script
 ./setup.sh
 ```
 
-The script will:
-- Install Homebrew if not present
-- Check and install only missing tools
-- Configure Zsh with plugins
-- Set up Starship prompt (gruvbox-rainbow)
-- Create Ghostty configuration
-- Back up existing .zshrc
-- Set Zsh as default shell
+---
 
-### Method 3: Nix Flakes (For Nix users)
+### Method 4: Nix Flakes (For Nix users)
 
-For advanced users who want declarative configuration:
+For advanced users who want a fully declarative configuration:
 
-#### Prerequisites
-
-1. **Nix installed** - Install via:
-   ```bash
-   sh <(curl -L https://nixos.org/nix/install) --daemon
-   ```
-
-2. **macOS** - This configuration is designed for macOS
-
-3. **Apple Silicon or Intel Mac** - Works on both architectures
-
-#### Quick Install
-
-### Step 1: Configure Nix
+**Prerequisites:** Nix installed, macOS (Apple Silicon or Intel)
 
 ```bash
-# Create nix config directory
+# Install Nix
+sh <(curl -L https://nixos.org/nix/install) --daemon
+
+# Enable flakes
 mkdir -p ~/.config/nix
-
-# Enable flakes and nix-command
 echo 'experimental-features = flakes nix-command' > ~/.config/nix/nix.conf
-```
 
-For daemon mode (recommended on macOS):
-```bash
-# Backup existing config if any
-sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.bak 2>/dev/null || true
-
-# Create new nix config
-sudo mkdir -p /etc/nix
-echo 'experimental-features = flakes nix-command' | sudo tee /etc/nix/nix.conf
-
-# Restart nix-daemon
-sudo launchctl kickstart -k system/org.nixos.nix-daemon
-```
-
-### Step 2: Clone and Setup
-
-```bash
-# Clone this repository
-git clone https://github.com/satyamsoni2211/ghostty-nix.git
-cd ghostty-nix
-
-# Generate lock file
+# Clone and activate
+git clone https://github.com/satyamsoni2211/dev-accelerator.git
+cd dev-accelerator
 nix flake update
-```
 
-### Step 3: Activate Configuration
-
-```bash
-# Replace 'satyam' with your username
+# Replace 'satyam' and 'Satyams-MacBook-Pro' with your username and hostname
 home-manager switch --flake .#satyam@Satyams-MacBook-Pro
 ```
 
-> **Note**: Replace `Satyams-MacBook-Pro` with your actual hostname. You can find it with: `hostname`
+> Find your hostname with: `hostname`
+
+---
+
+## Tools Included
+
+### Core CLI Tools
+
+| Tool | Replaces | Description |
+|---|---|---|
+| `ghostty` | iTerm2 / Terminal.app | GPU-accelerated terminal emulator |
+| `zsh` + plugins | bash | Shell with autosuggestions and syntax highlighting |
+| `starship` | plain prompt | Cross-shell prompt (gruvbox-rainbow preset) |
+| `eza` | `ls` | Modern file listing with icons |
+| `bat` | `cat` | Syntax-highlighted file viewer |
+| `ripgrep` | `grep` | Blazing fast text search |
+| `fd` | `find` | Intuitive file finder |
+| `zoxide` | `cd` | Smart directory jumping |
+| `fzf` | — | Fuzzy finder for files, history, and more |
+| `atuin` | shell history | Shell history with sync and search |
+| `yazi` | — | Terminal file manager |
+| `lazygit` | git CLI | TUI for git |
+| `jq` | — | JSON processor |
+| `direnv` | — | Per-directory environment variables |
+| `mise` | nvm/pyenv/rbenv | Unified runtime version manager |
+| `fnm` | nvm | Fast Node.js version manager |
+| `pyenv` | — | Python version manager |
+| `uv` | pip | Ultra-fast Python package manager |
+| `thefuck` | — | Corrects your previous command |
+| `htop` | top | Interactive process viewer |
+
+### 2025/2026 Productivity Tools
+
+| Tool | Description |
+|---|---|
+| `bottom` (`btm`) | Modern system monitor |
+| `tealdeer` | Fast `tldr` client |
+| `delta` | Git diff with syntax highlighting |
+| `tokei` | Code statistics (lines of code) |
+| `zellij` | Terminal workspace (tmux alternative) |
+| `gitui` | Git TUI |
+| `procs` | Modern `ps` replacement |
+| `ouch` | All-in-one compression/decompression |
+
+> `git` is assumed pre-installed and is not managed by these scripts.
+
+---
 
 ## Configuration Customization
 
-### Change Username/Hostname
+### Change Username/Hostname (Nix method)
 
-Edit `home/configuration.nix` and update:
+Edit `home/configuration.nix`:
+
 ```nix
 home = {
   username = "your-username";
@@ -167,137 +210,100 @@ home = {
 };
 ```
 
-### Add More Packages
+### Add More Packages (Nix method)
 
-Edit `home/configuration.nix` and add packages to the list:
 ```nix
 home.packages = with pkgs; [
-  # Add your packages here
   tmux
   neovim
-  # ...
+  # add packages here
 ];
 ```
 
 ### Customize Ghostty
 
-Edit `ghostty/ghostty.nix` to change:
-- Font family and size
-- Color theme
-- Keybindings
-- Window settings
+Edit `ghostty/ghostty.nix` or `ghostty_config` to change font, color theme, keybindings, and window settings.
 
 ### Customize Zsh
 
-Edit `zsh/zshrc.nix` to:
-- Add custom aliases
-- Configure plugins
-- Add environment variables
+Edit `zsh/zshrc.nix` or the files under `zsh/` to add aliases, configure plugins, and set environment variables.
 
-## Tools Included
+---
 
-| Tool | Description | Documentation Link |
-|------|-------------|-------------------|
-| `ghostty` | GPU-accelerated terminal emulator | https://ghostty.org/docs |
-| `zsh` | Shell with plugins (auto-detected) | https://zsh.sourceforge.io/Doc/Release/index.html |
-| `zsh-autosuggestions` | Zsh plugin for command suggestions | https://github.com/zsh-users/zsh-autosuggestions |
-| `zsh-syntax-highlighting` | Zsh plugin for syntax highlighting | https://github.com/zsh-users/zsh-syntax-highlighting |
-| `fzf` | Fuzzy finder | https://github.com/junegunn/fzf |
-| `fd` | Fast file finder | https://github.com/sharkdp/fd |
-| `zoxide` | Smarter cd command | https://github.com/ajeetdsouza/zoxide |
-| `yazi` | Blazing fast file manager | https://yazi-rs.github.io |
-| `ripgrep` | Fast grep alternative | https://github.com/BurntSushi/ripgrep |
-| `atuin` | Shell history with sync | https://docs.atuin.sh |
-| `starship` | Cross-shell prompt (gruvbox-rainbow) | https://starship.rs |
-| `mise` | Runtime version manager | https://mise.jdx.dev |
-| `fnm` | Node.js version manager | https://github.com/Schniz/fnm |
-| `pyenv` | Python version manager | https://github.com/pyenv/pyenv |
-| `uv` | Python package manager | https://docs.astral.sh/uv |
-| `jq` | JSON processor | https://jqlang.org |
-| `thefuck` | Command correction | https://github.com/nvbn/thefuck |
-| `eza` | Modern ls replacement | https://github.com/eza-community/eza |
-| `bat` | Modern cat replacement | https://github.com/sharkdp/bat |
-| `htop` | Interactive process viewer | https://htop.dev |
-| `direnv` | Environment variable loader | https://direnv.net |
-| `lazygit` | TUI for git | https://github.com/jesseduffield/lazygit |
+## Testing
 
-### New Productivity Tools (2025/2026)
+Docker-based tests validate all installation methods:
 
-| Tool | Description | Documentation Link |
-|------|-------------|-------------------|
-| `bottom` (btm) | Modern system monitor (htop alternative) | https://github.com/ClementTsang/bottom |
-| `tealdeer` | Fast tldr client | https://github.com/dandavison/tealdeer |
-| `delta` | Git pager with syntax highlighting | https://github.com/dandavison/delta |
-| `tokei` | Code statistics (lines of code) | https://github.com/XAMPPRocky/tokei |
-| `zellij` | Terminal workspace (tmux alternative) | https://zellij.dev |
-| `gitui` | Git TUI | https://github.com/extrawurst/gitui |
-| `procs` | Modern ps replacement | https://github.com/dalance/procs |
-| `ouch` | All-in-one compression tool | https://github.com/ouch-org/ouch |
+```bash
+cd tests
 
-> Note: `git` is assumed to be pre-installed on all systems and is not installed by the scripts.
+# Run all tests
+./run-tests.sh all
+
+# Run a specific test
+./run-tests.sh nix       # Nix flake setup
+./run-tests.sh homebrew  # Homebrew setup
+./run-tests.sh script    # Shell script setup
+```
+
+See `tests/README.md` for full details.
+
+---
+
+## Uninstall
+
+```bash
+rm -rf ~/.config/ghostty
+rm -rf ~/.config/starship.toml
+
+# Restore .zshrc backup if needed
+# cp ~/.zshrc.backup ~/.zshrc
+
+# Remove Nix configuration (if using Nix method)
+rm -rf ~/.config/nix
+sudo rm -rf /etc/nix
+```
+
+---
 
 ## Troubleshooting
 
-### Nix Daemon Issues
-
-If you encounter permission errors:
+**Nix daemon issues:**
 ```bash
 sudo launchctl kickstart -k system/org.nixos.nix-daemon
 ```
 
-### Ghostty Not Found
-
-The configuration builds Ghostty from source. If you want to use the binary instead:
+**Ghostty not found (Nix method):**
 ```bash
 # Install via Homebrew instead
 brew install ghostty
-
 # Then remove ghostty from the overlay in flake.nix
 ```
 
-### Update Configuration
-
-To update all packages:
+**Update everything (Nix method):**
 ```bash
 nix flake update
 home-manager switch --flake .#satyam@Satyams-MacBook-Pro
 ```
 
-## Uninstall
+---
 
-```bash
-# Remove the generated files
-rm -rf ~/.config/ghostty
-rm -rf ~/.config/starship.toml
+## Contributing
 
-# Optional: Restore .zshrc from backup if needed
-# cp ~/.zshrc.backup ~/.zshrc
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to add tools, fix bugs, or improve documentation.
 
-# Remove nix configuration (if using Nix method)
-rm -rf ~/.config/nix
-sudo rm -rf /etc/nix
-```
-
-## Testing
-
-Docker-based tests are provided to validate all three installation methods:
-
-```bash
-# Run all tests
-cd tests
-./run-tests.sh all
-
-# Run specific test
-./run-tests.sh nix       # Test Nix flake setup
-./run-tests.sh homebrew  # Test Homebrew setup
-./run-tests.sh script    # Test shell script setup
-```
-
-See `tests/README.md` for more details.
+---
 
 ## Credits
 
-- [Ghostty](https://ghostty.org) - Terminal emulator
-- [Nix](https://nixos.org) - Package manager
-- [Home Manager](https://github.com/nix-community/home-manager) - Nix-based dotfile management
-- [Catppuccin](https://github.com/catppuccin/catppuccin) - Color theme
+- [Ghostty](https://ghostty.org) — terminal emulator
+- [Nix](https://nixos.org) — package manager
+- [Home Manager](https://github.com/nix-community/home-manager) — Nix-based dotfile management
+- [Catppuccin](https://github.com/catppuccin/catppuccin) — color theme
+- [Starship](https://starship.rs) — shell prompt
+
+---
+
+## License
+
+[MIT](LICENSE) © 2025 Satyam Soni
