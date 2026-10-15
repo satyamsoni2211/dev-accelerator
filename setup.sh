@@ -229,11 +229,18 @@ setup_starship() {
     # Create starship config directory
     mkdir -p "$HOME/.config"
 
-    # Create starship config only if it doesn't exist
-    if [ ! -f "$HOME/.config/starship.toml" ]; then
-        starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml" 2>/dev/null || {
-            # Fallback if preset command not available
-            cat > "$HOME/.config/starship.toml" << 'EOF'
+    # Back up existing config once before overwriting
+    if [ -f "$HOME/.config/starship.toml" ] && [ ! -f "$HOME/.config/starship.toml.backup" ]; then
+        cp "$HOME/.config/starship.toml" "$HOME/.config/starship.toml.backup"
+        echo -e "${GREEN}✓${NC} Backed up existing Starship config to config.backup"
+    fi
+
+    # (Re)generate the config so preset changes always take effect
+    if starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml" --force 2>/dev/null; then
+        echo -e "${GREEN}Starship config written!${NC}"
+    else
+        # Fallback if preset command not available
+        cat > "$HOME/.config/starship.toml" << 'EOF'
 format = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$context$character"
 [username]
 show_always = true
@@ -259,10 +266,7 @@ style = "bold yellow"
 symbol = "rs "
 style = "bold red"
 EOF
-        }
-        echo -e "${GREEN}Starship config created!${NC}"
-    else
-        echo -e "${YELLOW}Starship config already exists, skipping.${NC}"
+        echo -e "${GREEN}Starship config written (fallback)!${NC}"
     fi
 
     # Add starship init to .zshrc only if not present
